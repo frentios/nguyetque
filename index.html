@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luyện tập Dược liệu</title>
+<meta name="description" content="Luyện tập trắc nghiệm dược liệu thực vật có hình ảnh — đúng mới qua câu, có giải thích.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f8f4; --card:#ffffff; --ink:#1d2a22; --muted:#5f6e64; --line:#e2e8df;
+  --brand:#2f7d4f; --brand-2:#e8f3ec; --ok:#1f8a4c; --ok-bg:#e6f6ec; --bad:#c43c3c; --bad-bg:#fdecec;
+  --shadow:0 1px 2px rgba(20,40,25,.06),0 6px 24px rgba(20,40,25,.06); --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 40px}
+header.top{display:flex;align-items:center;gap:10px;padding:6px 2px 14px}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--brand);display:grid;place-items:center;color:#fff;flex:none}
+.logo svg{width:22px;height:22px}
+.top h1{font-size:17px;margin:0;font-weight:700;letter-spacing:-.01em}
+.top .sub{font-size:12.5px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px}
+.hidden{display:none!important}
+label.f{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+input[type=text]{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;outline:none}
+input[type=text]:focus{border-color:var(--brand)}
+.secs{display:grid;gap:8px;margin:6px 0 4px}
+.chk{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:14.5px;user-select:none}
+.chk input{accent-color:var(--brand);width:18px;height:18px;flex:none}
+.chk .n{margin-left:auto;color:var(--muted);font-size:12.5px;white-space:nowrap}
+.chk:has(input:checked){border-color:var(--brand);background:var(--brand-2)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.pill{flex:1 1 0;min-width:80px;text-align:center;padding:10px 6px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:14px;font-weight:500}
+.pill.on{border-color:var(--brand);background:var(--brand-2);color:var(--brand)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:600;font-size:15.5px;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;background:var(--brand);color:#fff;width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--brand)}
+.mt{margin-top:16px}.mt-s{margin-top:10px}
+.hint{font-size:13px;color:var(--muted);margin-top:8px}
+.err{color:var(--bad);font-size:13px;margin-top:6px}
+/* quiz */
+.qbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13.5px;color:var(--muted)}
+.prog{flex:1;height:8px;background:#e4ebe4;border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--brand);width:0;transition:width .3s}
+.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--brand);background:var(--brand-2);padding:4px 10px;border-radius:99px;margin-bottom:10px}
+.qtext{font-size:18px;font-weight:600;line-height:1.45;margin:0 0 14px}
+.qtext i{font-weight:600}
+.qimg{display:block;width:100%;max-height:320px;object-fit:contain;background:#f1f4ef;border-radius:12px;margin-bottom:14px;cursor:zoom-in}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;text-align:left;font:inherit;font-size:15.5px;line-height:1.4;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:#b9cdbf}
+.opt .k{flex:none;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-weight:700;font-size:13px;background:#eef2ee;color:var(--muted)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);color:#8a2a2a;cursor:not-allowed}
+.opt.wrong .k{background:var(--bad);color:#fff}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.right .k{background:var(--ok);color:#fff}
+.opt:disabled{cursor:default}
+.shake{animation:sh .35s}
+@keyframes sh{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.msg{margin-top:12px;font-size:14px;font-weight:600}
+.msg.bad{color:var(--bad)}
+.exp{margin-top:14px;border:1.5px solid #bfe3cc;background:#f3fbf6;border-radius:14px;padding:14px;animation:fi .25s}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.exp h3{margin:0 0 10px;font-size:15px;color:var(--ok);display:flex;align-items:center;gap:6px}
+.herb{display:flex;gap:12px}
+.herb img{width:92px;height:92px;object-fit:cover;border-radius:10px;flex:none;cursor:zoom-in}
+.herb .nm{font-weight:700;font-size:16px}
+.herb .sc{font-style:italic;color:var(--muted);font-size:14px}
+dl{margin:10px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;line-height:1.45}
+dt{color:var(--muted);white-space:nowrap}
+dd{margin:0}
+dd.hl, dt.hl{font-weight:700;color:var(--ink)}
+dd.hl{background:#fff3c4;border-radius:4px;padding:0 4px;margin-left:-4px}
+.note{margin-top:10px;font-size:13.5px;color:#4b5a50}
+.foot{display:flex;gap:10px;margin-top:14px}
+.foot .btn{flex:1}
+/* result */
+.score{text-align:center;padding:8px 0 4px}
+.score .big{font-size:46px;font-weight:700;color:var(--brand);line-height:1}
+.score .lbl{color:var(--muted);font-size:14px;margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.stat{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:12px;color:var(--muted)}
+.miss{margin-top:16px}
+.miss h4{margin:0 0 8px;font-size:14.5px}
+.miss li{font-size:14px;margin:4px 0;line-height:1.4}
+.miss ol{padding-left:20px;margin:0;max-height:260px;overflow:auto}
+.zoom{position:fixed;inset:0;background:rgba(10,20,12,.85);display:grid;place-items:center;z-index:9;padding:16px;cursor:zoom-out}
+.zoom img{max-width:100%;max-height:90vh;border-radius:12px}
+@media (max-width:480px){.qtext{font-size:16.5px}.card{padding:16px}.herb img{width:76px;height:76px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+    <div><h1>Luyện tập Dược liệu</h1><div class="sub">Trắc nghiệm có hình ảnh · đúng mới qua câu</div></div>
+  </header>
+
+  <!-- START -->
+  <section id="start" class="card">
+    <label class="f" for="name">Họ và tên</label>
+    <input id="name" type="text" placeholder="Nhập họ tên của em" autocomplete="name">
+    <div id="nameErr" class="err hidden">Em nhập họ tên trước nhé.</div>
+
+    <label class="f mt">Chọn phần luyện tập</label>
+    <div id="secs" class="secs"></div>
+
+    <label class="f mt">Số câu</label>
+    <div id="counts" class="row"></div>
+
+    <button id="go" class="btn mt">Bắt đầu</button>
+    <div class="hint">Câu hỏi và đáp án được xáo trộn mỗi lần làm. Chọn sai thì chọn lại đến khi đúng; điểm tính theo số câu đúng ngay lần đầu.</div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="quiz" class="card hidden">
+    <div class="qbar"><span id="qnum"></span><div class="prog"><i id="bar"></i></div><span id="qscore"></span></div>
+    <span id="qtag" class="tag"></span>
+    <p id="qtext" class="qtext"></p>
+    <img id="qimg" class="qimg hidden" alt="Hình dược liệu cần nhận diện">
+    <div id="opts" class="opts"></div>
+    <div id="msg" class="msg hidden"></div>
+    <div id="exp" class="exp hidden"></div>
+    <div id="nextWrap" class="foot hidden"><button id="next" class="btn">Câu tiếp theo →</button></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="card hidden">
+    <div class="score"><div id="rName" style="font-weight:600;margin-bottom:10px"></div><div class="big" id="rScore"></div><div class="lbl">câu đúng ngay lần đầu</div></div>
+    <div class="stats">
+      <div class="stat"><b id="rPct"></b><span>Tỉ lệ</span></div>
+      <div class="stat"><b id="rWrong"></b><span>Lần chọn sai</span></div>
+      <div class="stat"><b id="rTime"></b><span>Thời gian</span></div>
+    </div>
+    <div id="rMiss" class="miss"></div>
+    <div class="foot" style="flex-direction:column">
+      <button id="redoMiss" class="btn">Làm lại các câu sai</button>
+      <button id="again" class="btn ghost">Làm lại từ đầu</button>
+    </div>
+  </section>
+</div>
+<div id="zoom" class="zoom hidden"><img alt="Phóng to hình dược liệu"></div>
+<script src="bank.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
