@@ -1,5 +1,5 @@
 (function () {
-  const { secs: SECS, bank: BANK } = window.QUIZ;
+  const { secs: SECS, bank: BANK, fam: FAM } = window.QUIZ;
   const $ = (id) => document.getElementById(id);
   const LET = 'ABCD';
   const FIELD = { 1: 'sci', 2: 'chem', 3: 'fam', 4: 'alt', 5: 'part', 6: 'chem' };
@@ -14,6 +14,8 @@
     SCI.forEach((n) => { if (out.includes(n)) out = out.split(n).join('<i>' + n + '</i>'); });
     return out;
   };
+  // đáp án là tên khoa học thì ghi kèm họ
+  const optHtml = (o) => FAM[o] ? `<i>${esc(o)}</i> <span class="fam">${esc(FAM[o])}</span>` : italSci(o);
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   // ---- start screen ----
@@ -72,12 +74,13 @@
     $('qnum').textContent = `Câu ${idx + 1}/${list.length}`;
     $('qscore').textContent = `✓ ${firstOK}`;
     $('bar').style.width = (idx / list.length) * 100 + '%';
-    $('qtag').textContent = SECS[q.sec];
+    $('qtag').textContent = q._again ? '↻ Ôn lại câu đã chọn sai · ' + SECS[q.sec] : SECS[q.sec];
+    $('qtag').classList.toggle('again', !!q._again);
     $('qtext').innerHTML = italSci(q.q);
     if (q.img) { $('qimg').src = q.img; $('qimg').classList.remove('hidden'); } else $('qimg').classList.add('hidden');
     const order = shuffle([0, 1, 2, 3]);
     $('opts').innerHTML = order.map((oi, i) =>
-      `<button class="opt" data-o="${oi}"><span class="k">${LET[i]}</span><span>${italSci(q.opts[oi])}</span></button>`).join('');
+      `<button class="opt" data-o="${oi}"><span class="k">${LET[i]}</span><span>${optHtml(q.opts[oi])}</span></button>`).join('');
     $('msg').className = 'msg hidden';
     $('exp').className = 'exp hidden';
     $('nextWrap').classList.add('hidden');
@@ -91,7 +94,16 @@
     if (+b.dataset.o === q.ans) {
       b.classList.add('right');
       document.querySelectorAll('.opt').forEach((o) => (o.disabled = true));
-      if (!triedWrong) firstOK++; else missed.push(q);
+      if (!q._again) {
+        if (!triedWrong) firstOK++;
+        else {
+          missed.push(q);
+          // câu chọn sai sẽ quay lại sau vài câu để em làm lại
+          list.splice(Math.min(idx + 4, list.length), 0, Object.assign({}, q, { _again: true }));
+        }
+      } else if (triedWrong && (q._n || 1) < 2) {
+        list.push(Object.assign({}, q, { _again: true, _n: (q._n || 1) + 1 }));
+      }
       $('qscore').textContent = `✓ ${firstOK}`;
       $('msg').className = 'msg hidden';
       explain(q);
@@ -112,7 +124,7 @@
       <h3>✓ Chính xác!</h3>
       <div class="herb">
         <img src="${h.img}" alt="${esc(h.vn)}" data-zoom>
-        <div><div class="nm">${esc(h.vn)}</div><div class="sc">${esc(h.sci)}</div></div>
+        <div><div class="nm">${esc(h.vn)}</div><div class="sc">${esc(h.sci)} <span class="fam">${esc(h.fam)}</span></div></div>
       </div>
       <dl>
         ${row('sci', 'Tên khoa học', '<i>' + esc(h.sci) + '</i>')}
@@ -129,14 +141,14 @@
   $('next').onclick = () => { idx++; idx < list.length ? (render(), window.scrollTo({ top: 0, behavior: 'smooth' })) : finish(); };
 
   function finish() {
-    const n = list.length, sec = Math.round((Date.now() - tStart) / 1000);
+    const n = list.filter((q) => !q._again).length, sec = Math.round((Date.now() - tStart) / 1000);
     $('rScore').textContent = `${firstOK}/${n}`;
     $('rPct').textContent = Math.round((firstOK / n) * 100) + '%';
     $('rWrong').textContent = wrongClicks;
     $('rTime').textContent = Math.floor(sec / 60) + "'" + String(sec % 60).padStart(2, '0') + '"';
     $('rMiss').innerHTML = missed.length
       ? `<h4>Các câu em chọn sai ở lần đầu (${missed.length})</h4><ol>${missed.map((q) =>
-          `<li>${italSci(q.q.replace(' (tên khoa học)', ''))} → <b>${italSci(q.opts[q.ans])}</b>${q.img ? ' <span style="color:var(--muted)">(' + esc(q.herb.vn) + ')</span>' : ''}</li>`).join('')}</ol>`
+          `<li>${italSci(q.q.replace(' (tên khoa học)', ''))} → <b>${optHtml(q.opts[q.ans])}</b>${q.img ? ' <span style="color:var(--muted)">(' + esc(q.herb.vn) + ')</span>' : ''}</li>`).join('')}</ol>`
       : '<h4 style="text-align:center;color:var(--ok)">🎉 Tuyệt vời! Em đúng hết ngay lần đầu.</h4>';
     $('redoMiss').classList.toggle('hidden', !missed.length);
     const hist = store.get('dl_hist') || []; hist.push({ score: firstOK, n, t: Date.now() }); store.set('dl_hist', hist.slice(-30));

@@ -47,6 +47,9 @@ input[type=text]:focus{border-color:var(--brand)}
 .counter b{font-size:22px;color:var(--brand);font-variant-numeric:tabular-nums}
 .counter span{font-size:13px;color:var(--muted)}
 /* quiz */
+.fam{font-style:normal;color:var(--muted);font-size:.92em}
+.opt.right .fam{color:#3d6b4e}
+.tag.again{color:#a35a00;background:#fff1dc}
 .qbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13.5px;color:var(--muted)}
 .prog{flex:1;height:8px;background:#e4ebe4;border-radius:99px;overflow:hidden}
 .prog i{display:block;height:100%;background:var(--brand);width:0;transition:width .3s}
@@ -120,7 +123,7 @@ dd.hl{background:#fff3c4;border-radius:4px;padding:0 4px;margin-left:-4px}
     <div id="counts" class="row"></div>
 
     <button id="go" class="btn mt">Bắt đầu</button>
-    <div class="hint">Câu hỏi và đáp án được xáo trộn mỗi lần làm. Chọn sai thì chọn lại đến khi đúng; điểm tính theo số câu đúng ngay lần đầu.</div>
+    <div class="hint">Câu hỏi và đáp án được xáo trộn mỗi lần làm. Chọn sai thì chọn lại đến khi đúng, câu đó sẽ quay lại sau vài câu để em làm lại. Điểm tính theo số câu đúng ngay lần đầu.</div>
   </section>
 
   <!-- QUIZ -->
