@@ -42,6 +42,10 @@ input[type=text]:focus{border-color:var(--brand)}
 .mt{margin-top:16px}.mt-s{margin-top:10px}
 .hint{font-size:13px;color:var(--muted);margin-top:8px}
 .err{color:var(--bad);font-size:13px;margin-top:6px}
+.counter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.counter div{background:var(--brand-2);border-radius:12px;padding:10px 12px;display:flex;align-items:baseline;gap:8px}
+.counter b{font-size:22px;color:var(--brand);font-variant-numeric:tabular-nums}
+.counter span{font-size:13px;color:var(--muted)}
 /* quiz */
 .qbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13.5px;color:var(--muted)}
 .prog{flex:1;height:8px;background:#e4ebe4;border-radius:99px;overflow:hidden}
@@ -104,11 +108,12 @@ dd.hl{background:#fff3c4;border-radius:4px;padding:0 4px;margin-left:-4px}
 
   <!-- START -->
   <section id="start" class="card">
-    <label class="f" for="name">Họ và tên</label>
-    <input id="name" type="text" placeholder="Nhập họ tên của em" autocomplete="name">
-    <div id="nameErr" class="err hidden">Em nhập họ tên trước nhé.</div>
+    <div id="counter" class="counter hidden">
+      <div><b id="cStart">0</b><span>lượt làm</span></div>
+      <div><b id="cDone">0</b><span>hoàn thành</span></div>
+    </div>
 
-    <label class="f mt">Chọn phần luyện tập</label>
+    <label class="f">Chọn phần luyện tập</label>
     <div id="secs" class="secs"></div>
 
     <label class="f mt">Số câu</label>
@@ -132,7 +137,7 @@ dd.hl{background:#fff3c4;border-radius:4px;padding:0 4px;margin-left:-4px}
 
   <!-- RESULT -->
   <section id="result" class="card hidden">
-    <div class="score"><div id="rName" style="font-weight:600;margin-bottom:10px"></div><div class="big" id="rScore"></div><div class="lbl">câu đúng ngay lần đầu</div></div>
+    <div class="score"><div class="big" id="rScore"></div><div class="lbl">câu đúng ngay lần đầu</div></div>
     <div class="stats">
       <div class="stat"><b id="rPct"></b><span>Tỉ lệ</span></div>
       <div class="stat"><b id="rWrong"></b><span>Lần chọn sai</span></div>

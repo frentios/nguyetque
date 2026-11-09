@@ -33,21 +33,32 @@
   }
   $('counts').addEventListener('click', (e) => { const p = e.target.closest('.pill'); if (!p) return; count = +p.dataset.n; updCounts(); });
   updCounts();
-  const saved = store.get('dl_name'); if (saved) $('name').value = saved;
 
   // ---- quiz state ----
-  let list = [], idx = 0, firstOK = 0, wrongClicks = 0, missed = [], tStart = 0, triedWrong = false, name = '';
+  let list = [], idx = 0, firstOK = 0, wrongClicks = 0, missed = [], tStart = 0, triedWrong = false;
+
+  // ---- bộ đếm lượt làm (dịch vụ đếm miễn phí, chạy được trên GitHub Pages) ----
+  const CNT = 'https://abacus.jasoncameron.dev';
+  const NS = 'nguyetque-duoclieu';
+  const fmt = (n) => Number(n).toLocaleString('vi-VN');
+  function setCount(key, v) { if (v != null) { $(key).textContent = fmt(v); $('counter').classList.remove('hidden'); } }
+  function counter(action, key, el) {
+    return fetch(`${CNT}/${action}/${NS}/${key}`, { cache: 'no-store' })
+      .then((r) => r.json()).then((d) => { if (typeof d.value === 'number') setCount(el, d.value); })
+      .catch(() => {});
+  }
+  function loadCounts() {
+    counter('get', 'luot-lam', 'cStart').then(() => {});
+    counter('get', 'hoan-thanh', 'cDone');
+  }
+  loadCounts();
 
   $('go').onclick = () => {
-    name = $('name').value.trim().replace(/\s+/g, ' ');
-    if (!name) { $('nameErr').classList.remove('hidden'); $('name').focus(); return; }
-    $('nameErr').classList.add('hidden');
-    store.set('dl_name', name);
     let pool = shuffle(BANK.filter((q) => chosen.has(q.sec)));
     if (count) pool = pool.slice(0, count);
+    counter('hit', 'luot-lam', 'cStart');
     begin(pool);
   };
-  $('name').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('go').click(); });
 
   function begin(pool) {
     list = pool; idx = 0; firstOK = 0; wrongClicks = 0; missed = []; tStart = Date.now();
@@ -119,7 +130,6 @@
 
   function finish() {
     const n = list.length, sec = Math.round((Date.now() - tStart) / 1000);
-    $('rName').textContent = name;
     $('rScore').textContent = `${firstOK}/${n}`;
     $('rPct').textContent = Math.round((firstOK / n) * 100) + '%';
     $('rWrong').textContent = wrongClicks;
@@ -129,11 +139,12 @@
           `<li>${italSci(q.q.replace(' (tên khoa học)', ''))} → <b>${italSci(q.opts[q.ans])}</b>${q.img ? ' <span style="color:var(--muted)">(' + esc(q.herb.vn) + ')</span>' : ''}</li>`).join('')}</ol>`
       : '<h4 style="text-align:center;color:var(--ok)">🎉 Tuyệt vời! Em đúng hết ngay lần đầu.</h4>';
     $('redoMiss').classList.toggle('hidden', !missed.length);
-    const hist = store.get('dl_hist') || []; hist.push({ name, score: firstOK, n, t: Date.now() }); store.set('dl_hist', hist.slice(-30));
+    const hist = store.get('dl_hist') || []; hist.push({ score: firstOK, n, t: Date.now() }); store.set('dl_hist', hist.slice(-30));
+    counter('hit', 'hoan-thanh', 'cDone');
     show('result');
   }
   $('redoMiss').onclick = () => begin(shuffle(missed));
-  $('again').onclick = () => show('start');
+  $('again').onclick = () => { show('start'); loadCounts(); };
 
   // zoom
   document.addEventListener('click', (e) => {
